@@ -7,7 +7,6 @@ import com.tutorial.ems.core.domain.Employee;
 import com.tutorial.ems.core.port.in.employee.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface EmployeeWebMapper {
@@ -18,7 +17,6 @@ public interface EmployeeWebMapper {
 
     CreateEmployeeCommand toCreateEmployeeCommand(EmployeeRequest employee);
 
-    // Use explicit default method to build UpdateEmployeeCommand to avoid MapStruct/Lombok builder detection issues
     default UpdateEmployeeCommand toUpdateEmployeeCommand(Long id, EmployeeRequest employee) {
         return UpdateEmployeeCommand.builder()
                 .id(id)

@@ -1,81 +1,144 @@
 # EMS (Employee Management System)
 
-This project is a small Spring Boot application used for tutorial/demo purposes.
+This is a simple Employee Management System (EMS) built using java Spring Boot framework. It provides basic functionalities to manage employee records including creating, reading, updating, and deleting employee information.
 
-What I changed for you
-- Ensured the MySQL JDBC driver is available via Gradle (`com.mysql:mysql-connector-j:8.3.0` is already declared in `build.gradle`).
-- Added a minimal test to verify the MySQL driver can be loaded: `src/test/java/com/tutorial/ems/MySqlDriverLoadTest.java`.
-- Applied two Clean Architecture improvements (low-risk, incremental):
-  - Introduced repository ports (interfaces) in `core.port.repository` and made the Spring Data JPA interfaces implement those ports.
-    - Files: `src/main/java/com/tutorial/ems/core/port/repository/DepartmentRepositoryPort.java` and `EmployeeRepositoryPort.java`
-  - Introduced a small domain model for `Department` and mapping helpers:
-    - Domain: `src/main/java/com/tutorial/ems/core/domain/Department.java`
-    - Mapper changes: `src/main/java/com/tutorial/ems/infrastructure/mapper/DepartmentMapper.java` (added toDomain/toEntity methods)
-  - Updated services to depend on the repository ports (dependency inversion) and to use the domain for `Department` logic:
-    - `src/main/java/com/tutorial/ems/core/service/DepartmentServiceImpl.java`
-    - `src/main/java/com/tutorial/ems/core/service/EmployeeServiceImpl.java` (now depends on ports and receives the `DepartmentMapper` in constructor)
+## Features
+- Add new employee
+- View all employees
+- Update employee details
+- Delete employee
+- Search employees by department
 
-Quick start (Windows PowerShell)
+## Technologies Used
+- Java
+- Spring Boot
+- Spring Data JPA
+- Actuator
 
-- Build the project and run tests (refreshing dependencies):
+##  Flow Summary
+HTTP Request
+    ↓
+CreateEmployeeRequest (validation)
+    ↓
+[WebMapper] → CreateEmployeeCommand
+    ↓
+CreateEmployeeUseCase.execute(command)
+    ↓
+EmployeeServiceImpl (business logic)
+    ↓
+EmployeeRepository.save(employee) [PORT]
+    ↓
+EmployeeRepositoryAdapter [ADAPTER]
+    ↓
+[PersistenceMapper] → EmployeeEntity
+    ↓
+JpaRepository.save(entity)
+    ↓
+Database
+    ↓
+[Return path reverses the flow]
+    ↓
+EmployeeResponse
+    ↓
+HTTP Response (JSON)
 
-```powershell
-.\gradlew clean build --refresh-dependencies
-```
+## Learning Notes
+1. @Builder Pattern (Readability & Safety)
 
-- Run only the driver-load smoke test (verifies the MySQL driver class is on the test classpath):
+Why
+- Improves object creation readability
+- Avoids large constructors with unclear parameter order
+- Makes optional fields explicit
 
-```powershell
-.\gradlew test --tests *MySqlDriverLoadTest
-```
+Example
+UpdateEmployeeCommand updateCommand = UpdateEmployeeCommand.builder()
+.id(1L)
+.firstName("Jane")
+.lastName("Smith")
+.email("jane.smith@company.com")
+.phoneNumber("+9876543210")
+.hireDate(LocalDate.of(2024, 1, 15))
+.role("SENIOR_DEVELOPER")
+.departmentId(1L)
+.build();
 
-- Run the application (will attempt to connect to the database using `application.properties`):
+What I learned
+- Builder makes code easier to review and less error-prone
+- Very useful for DTOs and command objects
 
-```powershell
-.\gradlew bootRun
-```
+2 Ports & Adapters (Hexagonal Architecture)
 
-Sample `application.properties` (edit values as needed)
+Why
+- Decouple business logic from infrastructure
+- Make code testable without real dependencies
+- Support multiple implementations
 
-```
-spring.datasource.url=jdbc:mysql://localhost:3306/ems?serverTimezone=UTC&useSSL=false
-spring.datasource.username=your_db_user
-spring.datasource.password=your_db_password
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.jpa.hibernate.ddl-auto=update
-```
+Example
+public interface DepartmentRepository {
+    Department save(Department department);
+}
 
-If you want tests to use an in-memory DB (so they don't try to contact your MySQL), add or edit `src/test/resources/application-test.properties` to point to H2:
+@Component
+public class DepartmentRepositoryAdapter implements DepartmentRepository {
+}
 
-```
-spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
-spring.datasource.driver-class-name=org.h2.Driver
-spring.jpa.hibernate.ddl-auto=create-drop
-```
+What I learned
+- Interfaces protect use cases from infrastructure changes
 
-Troubleshooting
-- ClassNotFoundException: com.mysql.cj.jdbc.Driver
-  - Verify `build.gradle` contains `implementation 'com.mysql:mysql-connector-j:8.3.0'` and run `.\gradlew clean build --refresh-dependencies`.
-  - Re-import the Gradle project in your IDE or invalidate caches (IDE-dependent).
-  - If you must build offline, add the connector jar to `libs/` and reference with `implementation files('libs/mysql-connector-java-<ver>.jar')`.
+3 Use Case vs Command / Query Separation (SRP – Single Responsibility)
 
-- Dependency conflicts or multiple connector versions:
-  - Inspect runtimeClasspath: `.\gradlew dependencies --configuration runtimeClasspath`
-  - Force a version in Gradle if necessary with a resolutionStrategy.
+Why
+- Each class has one clear responsibility
+- Commands → state change
+- Queries → data retrieval
 
-Notes about the Clean Architecture changes
-- Ports (interfaces) live in `src/main/java/com/tutorial/ems/core/port/repository/` and define the persistence operations used by services.
-- Concrete JPA repositories remain in the `infrastructure.repository` package and now implement the port interfaces.
-- Domain objects live under `src/main/java/com/tutorial/ems/core/domain/` (currently `Department` record). Mappers translate between JPA entities and domain objects, and between entities and DTOs.
-- This is an incremental move toward Clean Architecture — services now depend on ports (interfaces) declared in the core/application layer instead of concrete infrastructure classes.
+Structure
+usecase/
+├── CreateEmployeeUseCase
+├── GetEmployeeByIdUseCase
+command/
+├── CreateEmployeeCommand
+query/
+├── GetEmployeeByIdQuery
 
-Suggested next steps (pick one)
-1. Update controllers to only accept and return DTOs and to avoid importing JPA entities directly (low-risk).
-2. Add small unit tests for `DepartmentMapper` to validate `toDomain`/`toEntity` roundtrips.
-3. Introduce domain-based DTOs and adapt services/controllers to use domain objects internally (medium work).
 
-If you want one of the above I can implement it for you (I can add unit tests or update controllers automatically and run the build/tests).
+What I learned
+- Makes future changes safer and localized
 
-Contact / notes
-- If your IDE still reports unresolved types or shows red imports, re-import the Gradle project and/or invalidate the IDE cache.
-- I ran a full build in this workspace after making changes; build and tests completed successfully.
+4 Dependency Injection via Interfaces (DI Best Practice)
+
+Why
+- Reduce coupling
+- Improve testability
+- Enable mocking
+
+What I learned
+- Spring resolves implementations at runtime
+- Wrong dependency versions cause UnsatisfiedDependencyException
+
+5 JUnit + Mockito Testing Patterns
+
+Key Patterns Learned
+Given – When – Then
+given(clusterClient.execute(any()))
+.willReturn(result);
+
+Assert
+assertThat(response).isNotNull();
+assertThat(response.size()).isEqualTo(3);
+
+Verify
+verify(clusterClient).execute(any());
+
+6 Mapping (Domain ↔ DTO ↔ Response)
+
+Why
+- Avoid leaking domain models to API layer
+- Support API evolution without breaking business logic
+
+Example
+- mapper.toCreateDepartmentCommand(departmentRequest)
+
+What I learned
+- Mapping adds clarity at boundaries
+- Makes testing and refactoring easier
