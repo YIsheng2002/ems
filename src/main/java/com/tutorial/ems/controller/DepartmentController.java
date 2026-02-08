@@ -7,6 +7,8 @@ import com.tutorial.ems.core.port.in.department.CreateDepartmentUseCase;
 import com.tutorial.ems.core.port.in.department.DeleteDepartmentUseCase;
 import com.tutorial.ems.core.port.in.department.GetDepartmentUseCase;
 import com.tutorial.ems.core.port.in.department.UpdateDepartmentUseCase;
+import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,28 +26,28 @@ public class DepartmentController {
     private final DepartmentWebMapper mapper;
 
     @PostMapping("/")
-    public ResponseEntity<DepartmentResponse> create(
-            @RequestBody DepartmentRequest departmentRequest
+    public ResponseEntity<@NonNull DepartmentResponse> createDepartment(
+            @Valid @RequestBody DepartmentRequest departmentRequest
     ){
-        var createdDepartment = createDepartmentUseCase.create(
+        var createdDepartment = createDepartmentUseCase.createDepartment(
                 mapper.toCreateDepartmentCommand(departmentRequest)
         );
         return ResponseEntity.ok(mapper.toDepartmentResponse(createdDepartment));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DepartmentResponse> getById(
-            @PathVariable Long id
+    public ResponseEntity<@NonNull DepartmentResponse> getDepartmentById(
+            @Valid @PathVariable Long id
     ){
-        var department = getDepartmentUseCase.get(
+        var department = getDepartmentUseCase.getDepartment(
                 mapper.toGetDepartmentQuery(id)
         );
         return ResponseEntity.ok(mapper.toDepartmentResponse(department));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<DepartmentResponse>> getAll(){
-        var departments = getDepartmentUseCase.getAll();
+    @GetMapping()
+    public ResponseEntity<@NonNull List<DepartmentResponse>> getAllDepartments(){
+        var departments = getDepartmentUseCase.getAllDepartments();
         var response = departments.stream()
                 .map(mapper::toDepartmentResponse)
                 .toList();
@@ -53,21 +55,21 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DepartmentResponse> update(
-            @PathVariable Long id,
-            @RequestBody DepartmentRequest departmentRequest
+    public ResponseEntity<@NonNull DepartmentResponse> updateDepartment(
+            @Valid @PathVariable Long id,
+            @Valid @RequestBody DepartmentRequest departmentRequest
     ){
-        var updatedDepartment = updateDepartmentUseCase.edit(
+        var updatedDepartment = updateDepartmentUseCase.editDepartment(
                 mapper.toUpdateDepartmentCommand(id, departmentRequest)
         );
         return ResponseEntity.ok(mapper.toDepartmentResponse(updatedDepartment));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable Long id
+    public ResponseEntity<Void> deleteDepartment(
+            @Valid @PathVariable Long id
     ){
-        deleteDepartmentUseCase.delete(
+        deleteDepartmentUseCase.deleteDepartment(
                 mapper.toDeleteDepartmentCommand(id)
         );
         return ResponseEntity.noContent().build();

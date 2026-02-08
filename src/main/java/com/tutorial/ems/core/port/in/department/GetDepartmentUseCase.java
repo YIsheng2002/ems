@@ -5,9 +5,7 @@ import com.tutorial.ems.core.domain.Department;
 import java.util.List;
 
 public interface GetDepartmentUseCase {
-    Department get(GetDepartmentQuery query);
+    Department getDepartment(GetDepartmentQuery query);
 
-    List<Department> getAll();
-
-
+    List<Department> getAllDepartments();
 }

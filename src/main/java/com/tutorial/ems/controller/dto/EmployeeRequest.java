@@ -11,28 +11,28 @@ import lombok.Data;
 
 @Data
 public class EmployeeRequest {
-        @NotBlank
         @Size(min = 1, max = 50)
+        @NotBlank(message = "First name cannot be blank")
         private  String firstName;
 
-        @NotBlank
         @Size(min = 1, max = 50)
+        @NotBlank(message = "Last name cannot be blank")
         private String lastName;
 
-        @NotBlank
-        @Email
+        @Email(message = "Email format is invalid")
+        @NotBlank(message= "Email cannot be blank")
         private String email;
 
-        @NotBlank
         @Size(min = 10, max = 13)
+        @NotBlank(message = "Phone number cannot be blank")
         private String phoneNumber;
 
-        @NotNull
+        @NotNull(message = "Hire date cannot be null")
         private LocalDate hireDate;
 
-        @NotBlank
+        @NotBlank(message = "Role cannot be blank")
         private String role;
 
-        @NotNull
+        @NotNull(message = "Department ID cannot be null")
         private Long departmentId;
 }

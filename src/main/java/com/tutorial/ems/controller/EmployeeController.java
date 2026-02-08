@@ -8,6 +8,7 @@ import com.tutorial.ems.core.port.in.employee.DeleteEmployeeUseCase;
 import com.tutorial.ems.core.port.in.employee.GetEmployeeUseCase;
 import com.tutorial.ems.core.port.in.employee.UpdateEmployeeUseCase;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +27,10 @@ public class EmployeeController {
     private final EmployeeWebMapper mapper;
 
     @PostMapping()
-    public ResponseEntity<EmployeeResponse> create(
-            @RequestBody EmployeeRequest employeeRequest
+    public ResponseEntity<@NonNull EmployeeResponse> createEmployee(
+            @Valid @RequestBody EmployeeRequest employeeRequest
     ){
-        var createdEmployee = createEmployeeUseCase.create(
+        var createdEmployee = createEmployeeUseCase.createEmployee(
                 mapper.toCreateEmployeeCommand(employeeRequest)
         );
 
@@ -37,18 +38,18 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeResponse> getById(
-            @PathVariable Long id
+    public ResponseEntity<@NonNull EmployeeResponse> getEmployeeById(
+            @Valid @PathVariable Long id
     ){
-        var employee = getEmployeeUseCase.get(
+        var employee = getEmployeeUseCase.getEmployee(
                 mapper.toGetEmployeeQuery(id)
         );
         return ResponseEntity.ok(mapper.toEmployeeResponse(employee));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<EmployeeResponse>> getAll(){
-        var employees = getEmployeeUseCase.getAll();
+    public ResponseEntity<@NonNull List<EmployeeResponse>> getAllEmployees(){
+        var employees = getEmployeeUseCase.getAllEmployees();
         var response = employees.stream()
                 .map(mapper::toEmployeeResponse)
                 .toList();
@@ -56,10 +57,10 @@ public class EmployeeController {
     }
 
     @GetMapping("/department/{departmentId}")
-    public ResponseEntity<List<EmployeeResponse>> getAllByDepartment(
+    public ResponseEntity<@NonNull List<EmployeeResponse>> getAllEmployeeByDepartmentID(
             @PathVariable Long departmentId
     ) {
-        var employees = getEmployeeUseCase.getByDepartment(
+        var employees = getEmployeeUseCase.getEmployeesByDepartment(
                 mapper.toGetEmployeeByDepartmentQuery(departmentId)
         );
         var response = employees.stream()
@@ -69,21 +70,21 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeResponse> update(
+    public ResponseEntity<@NonNull EmployeeResponse> updateEmployee(
             @PathVariable Long id,
             @Valid @RequestBody EmployeeRequest employeeRequest
     ){
-        var updatedEmployee = updateEmployeeUseCase.edit(
+        var updatedEmployee = updateEmployeeUseCase.editEmployee(
                 mapper.toUpdateEmployeeCommand(id, employeeRequest)
         );
         return ResponseEntity.ok(mapper.toEmployeeResponse(updatedEmployee));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteEmployee(
             @PathVariable Long id
     ){
-        deleteEmployeeUseCase.delete(
+        deleteEmployeeUseCase.deleteEmployee(
                 mapper.toDeleteEmployeeCommand(id)
         );
         return ResponseEntity.noContent().build();

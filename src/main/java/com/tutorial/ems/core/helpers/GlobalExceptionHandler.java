@@ -17,6 +17,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Map<String,String>> handleNotFound(NotFoundException ex) {
         Map<String,String> body = new HashMap<>();
+        body.put("status code", String.valueOf(HttpStatus.NOT_FOUND.value()));
         body.put("message", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
@@ -24,6 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String,String>> handleConflict(DataIntegrityViolationException ex) {
         Map<String,String> body = new HashMap<>();
+        body.put("status code", String.valueOf(HttpStatus.CONFLICT.value()));
         body.put("message", "Data integrity violation: " + ex.getMostSpecificCause().getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
@@ -31,15 +33,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String,String>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String,String> body = new HashMap<>();
+        body.put("status code", String.valueOf(HttpStatus.BAD_REQUEST.value()));
         ex.getBindingResult().getFieldErrors().forEach(err -> body.put(err.getField(), err.getDefaultMessage()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String,String>> handleOther(Exception ex) {
-        Map<String,String> body = new HashMap<>();
-        body.put("message", "Internal server error");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Map<String,String>> handleOther(Exception ex) {
+//        Map<String,String> body = new HashMap<>();
+//        body.put("message", "Internal server error");
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+//    }
 }
 
