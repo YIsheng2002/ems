@@ -5,7 +5,7 @@ import com.tutorial.ems.core.domain.Employee;
 import java.util.List;
 
 public interface GetEmployeeUseCase {
-    Employee get(GetEmployeeQuery query);
-    List<Employee> getByDepartment(GetEmployeeByDepartmentQuery query);
-    List<Employee> getAll();
+    Employee getEmployee(GetEmployeeQuery query);
+    List<Employee> getEmployeesByDepartment(GetEmployeeByDepartmentQuery query);
+    List<Employee> getAllEmployees();
 }

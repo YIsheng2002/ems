@@ -1,10 +1,10 @@
 package com.tutorial.ems.core.port.in.department;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 @Value
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GetDepartmentQuery {
     Long departmentId;
 }

@@ -74,7 +74,7 @@ class EmployeeServiceTest {
 
     @Test
     @DisplayName("Should create employee successfully")
-    void shouldCreateEmployeeSuccessfully() {
+    void test_shouldCreateEmployeeSuccessfully() {
         // Given
         given(departmentRepository.findById(1L))
                 .willReturn(Optional.of(testDepartment));
@@ -82,7 +82,7 @@ class EmployeeServiceTest {
                 .willReturn(testEmployee);
 
         // When
-        Employee result = employeeService.create(createCommand);
+        Employee result = employeeService.createEmployee(createCommand);
 
         // Then
         assertThat(result).isNotNull();
@@ -99,13 +99,13 @@ class EmployeeServiceTest {
 
     @Test
     @DisplayName("Should throw exception when department not found")
-    void shouldThrowExceptionWhenDepartmentNotFound() {
+    void test_shouldThrowException_WhenDepartmentNotFound() {
         // Given
         given(departmentRepository.findById(1L))
                 .willReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> employeeService.create(createCommand))
+        assertThatThrownBy(() -> employeeService.createEmployee(createCommand))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Department not found");
 
@@ -115,14 +115,14 @@ class EmployeeServiceTest {
 
     @Test
     @DisplayName("Should get employee by ID successfully")
-    void shouldGetEmployeeById() {
+    void test_shouldGetEmployeeById() {
         // Given
         GetEmployeeQuery query = GetEmployeeQuery.builder().id(1L).build();
         given(employeeRepository.findById(1L))
                 .willReturn(Optional.of(testEmployee));
 
         // When
-        Employee result = employeeService.get(query);
+        Employee result = employeeService.getEmployee(query);
 
         // Then
         assertThat(result).isNotNull();
@@ -134,7 +134,7 @@ class EmployeeServiceTest {
 
     @Test
     @DisplayName("Should update employee successfully")
-    void shouldUpdateEmployeeSuccessfully() {
+    void test_shouldUpdateEmployeeSuccessfully() {
         // Given
         UpdateEmployeeCommand updateCommand = UpdateEmployeeCommand.builder()
                 .id(1L)
@@ -166,7 +166,7 @@ class EmployeeServiceTest {
                 .willReturn(updatedEmployee);
 
         // When
-        Employee result = employeeService.edit(updateCommand);
+        Employee result = employeeService.editEmployee(updateCommand);
 
         // Then
         assertThat(result.getFirstName()).isEqualTo("Jane");

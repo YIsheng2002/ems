@@ -23,7 +23,7 @@ public class DepartmentServiceImpl implements
     private final DepartmentRepository departmentRepository;
 
     @Override
-    public Department create(CreateDepartmentCommand command) {
+    public Department createDepartment(CreateDepartmentCommand command) {
         var department = Department
                             .builder()
                             .id(null)
@@ -38,19 +38,19 @@ public class DepartmentServiceImpl implements
     }
 
     @Override
-    public Department get(GetDepartmentQuery query) {
+    public Department getDepartment(GetDepartmentQuery query) {
         var department = departmentRepository.findById(query.getDepartmentId());
 
         return department.orElse(null);
     }
 
     @Override
-    public List<Department> getAll() {
+    public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
     }
 
     @Override
-    public Department edit(UpdateDepartmentCommand command) {
+    public Department editDepartment(UpdateDepartmentCommand command) {
         var existingDepartmentOpt = departmentRepository.findById(command.getDepartmentId());
         if (existingDepartmentOpt.isEmpty()) {
             log.error("Department not found with id: " + command.getDepartmentId());
@@ -70,7 +70,7 @@ public class DepartmentServiceImpl implements
     }
 
     @Override
-    public void delete(DeleteDepartmentCommand command) {
+    public void deleteDepartment(DeleteDepartmentCommand command) {
         departmentRepository.deleteById(command.getDepartmentId());
         log.info("Department Deleted Successfully");
     }

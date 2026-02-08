@@ -27,7 +27,7 @@ public class EmployeeServiceImpl implements
     private final EmployeeRepository employeeRepository;
 
     @Override
-    public Employee create(
+    public Employee createEmployee(
             CreateEmployeeCommand command
     ) {
         var department = departmentRepository.findById(command.getDepartmentId()).orElseThrow(
@@ -53,24 +53,24 @@ public class EmployeeServiceImpl implements
     }
 
     @Override
-    public Employee get(GetEmployeeQuery query) {
+    public Employee getEmployee(GetEmployeeQuery query) {
         var employee = employeeRepository.findById(query.getId());
         return employee.orElse(null);
     }
 
     @Override
-    public List<Employee> getAll() {
+    public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
     @Override
-    public List<Employee> getByDepartment(GetEmployeeByDepartmentQuery query) {
+    public List<Employee> getEmployeesByDepartment(GetEmployeeByDepartmentQuery query) {
 
         return employeeRepository.findByDepartmentId(query.getDepartmentId());
     }
 
     @Override
-    public Employee edit(UpdateEmployeeCommand command) {
+    public Employee editEmployee(UpdateEmployeeCommand command) {
         var existingEmployeeOpt = employeeRepository.findById(command.getId());
         if (existingEmployeeOpt.isEmpty()) {
             log.error("Employee not found with id: " + command.getId());
@@ -99,7 +99,7 @@ public class EmployeeServiceImpl implements
     }
 
     @Override
-    public void delete(DeleteEmployeeCommand command) {
+    public void deleteEmployee(DeleteEmployeeCommand command) {
         employeeRepository.deleteById(command.getId());
         log.info("Employee Deleted Successfully");
     }
