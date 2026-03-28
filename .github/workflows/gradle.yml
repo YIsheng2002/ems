@@ -56,12 +56,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Check build output
-        run: ls -R build
-
       # Build & Push Image
       - name: Get version
         run: echo "VERSION=$(./gradlew -q printVersion)" >> $GITHUB_ENV
+
+      - name: Debug working directory
+        run: |
+          pwd
+          ls -R
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
