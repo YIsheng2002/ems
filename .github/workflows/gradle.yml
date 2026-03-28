@@ -68,6 +68,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          context: ./ems
           tags: |
               ${{ secrets.DOCKER_USERNAME }}/ems-app:${{ env.VERSION }}
               ${{ secrets.DOCKER_USERNAME }}/ems-app:latest
