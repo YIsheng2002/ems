@@ -73,6 +73,7 @@ jobs:
         with:
           context: .
           no-cache: true
+          push: true
           tags: |
               ${{ secrets.DOCKER_USERNAME }}/ems-app:${{ env.VERSION }}
               ${{ secrets.DOCKER_USERNAME }}/ems-app:latest
