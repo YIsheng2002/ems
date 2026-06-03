@@ -16,6 +16,7 @@ This is a simple Employee Management System (EMS) built using java Spring Boot f
 - Actuator
 
 ##  Flow Summary
+`
 HTTP Request
     ↓
 CreateEmployeeRequest (validation)
@@ -41,6 +42,7 @@ Database
 EmployeeResponse
     ↓
 HTTP Response (JSON)
+`
 
 ## Learning Notes
 1. @Builder Pattern (Readability & Safety)
